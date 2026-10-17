@@ -41,8 +41,7 @@
 
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
-
-
+TakeMeter classifies posts from **r/MSCS**, a community discussing computer science master’s admissions and career decisions, by the kind of help their authors seek. It sorts posts into four categories: `profile_calibration` for evaluating admission competitiveness, `application_levers` for choosing application tactics, `degree_tradeoff` for weighing graduate study against career and financial alternatives, and `cycle_pulse` for checking admission updates and other applicants’ plans. The goal is to distinguish the central purpose of each post, even when it covers several topics
 
 ---
 
@@ -54,35 +53,55 @@
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+### `profile_calibration`
 
-**Definition:**
-
-**Example 1:**
->
-
-**Example 2:**
->
-
-### `label_two`
-
-**Definition:**
+**Definition:** Posts asking how an applicant’s qualifications match specific programs or which universities would make a realistic shortlist.
 
 **Example 1:**
->
+> “How competitive is my profile for Cambridge, Oxford, Imperial, ETH, EPFL, Toronto, Waterloo, UBC, Edinburgh, and UCL”
 
 **Example 2:**
->
+> “What are my chances for the following programs? Am I aiming too high? Should I have more safe Universities in my list?”
+
+### `application_levers`
+
+**Definition:** Posts asking which specific application action to take, such as submitting test scores, selecting recommenders, or contacting professors.
+
+**Example 1:**
+> “I got a 170 on quant but 148 on verbal. Should i submit my scores or not ?”
+
+**Example 2:**
+> “Will it deter the strength of my application if all three lors come from industry, if so by how much?”
+
+### `degree_tradeoff`
+
+**Definition:** Posts weighing whether pursuing a master’s degree is worthwhile compared with employment or other career paths, considering costs, risks, and long-term goals.
+
+**Example 1:**
+> “For perf or research engineering at AI labs, is an MS worth turning down the quant offer, or is a PhD the only grad path that matters?”
+
+**Example 2:**
+> “I just wanna know if even considering higher education is worth it considering my profile.”
+
+### `cycle_pulse`
+
+**Definition:** Posts asking about admission-cycle developments or other applicants’ experiences and plans, rather than requesting an individual profile evaluation or application strategy.
+
+**Example 1:**
+> “Has anyone received Spring 2027 admission decisions for UIUC MCS, TAMU MCS, or Columbia MSCS?”
+
+**Example 2:**
+> “Just curious if people are still going ahead with their plans or reconsidering the US altogether.”
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `profile_calibration` and `degree_tradeoff`.
 
 **The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
 
+If the central question is **whether graduate school is worth pursuing compared with employment or another path**, use `degree_tradeoff`, even when the post includes a detailed applicant profile. If the central question is **which programs match the applicant’s qualifications or how competitive their application is**, use `profile_calibration`.
 
+For posts asking both, use the main decision the author frames the post around. For example, the quant-offer post is `degree_tradeoff` because it weighs graduate study against an existing job offer.
 
 ---
 
