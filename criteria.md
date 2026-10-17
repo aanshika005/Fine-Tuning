@@ -51,63 +51,82 @@ whether you hit them:
 
 ---
 
-## 1.
+## 1. Overall accuracy of at least 70%
 
-<!-- Your criterion. It must name a number. -->
-
-
+At least **70% of held-out posts** must receive the correct label in each run.
 
 **Why this target:**
 
-
+The classifier should identify the main request in at least seven out of ten
+r/MSCS posts to be useful for sorting discussions. The examples read so far
+include both direct requests, such as submitting GRE scores, and mixed requests
+about admission chances and whether a degree is worthwhile, so perfect accuracy
+would be unrealistic for a model trained on roughly 200 posts.
 
 ---
 
-## 2.
+## 2. Every label has an F1 score of at least 0.55
 
-<!-- Your criterion. -->
-
-
+Each of the four labels must have a held-out **F1 score of at least 0.55** in
+each run, using the notebook's per-label precision and recall calculations.
 
 **Why this target:**
 
-
+Strong results on profile evaluations should not conceal failure to recognize
+admission updates or degree decisions. With 200 posts divided among four labels,
+some labels may have only a handful of examples in a 15% test split, so 0.55 is
+a deliberately lower floor than the overall accuracy target while still
+requiring both useful precision and recall.
 
 ---
 
-## 3.
+## 3. At most 25% confusion across the hardest boundary
 
-<!-- Your criterion. -->
-
-
+Among test posts whose true label is `profile_calibration` or `degree_tradeoff`,
+**at most 25%** may be predicted as the other label in each run. Calculate this
+as the sum of the two cross-label confusion-matrix cells divided by the total
+number of true test posts in those two classes. Errors into the other classes
+are still covered by criteria 1 and 2.
 
 **Why this target:**
 
-
+The quant-offer post asks about both admission odds and turning down a job,
+which makes this boundary especially easy to confuse. Allowing at most one in
+four posts to cross this boundary tests whether the model distinguishes
+“Where can I get in?” from “Is graduate school worth it?” instead of treating
+every detailed applicant profile as `profile_calibration`.
 
 ---
 
-## 4.
+## 4. At least 30 examples per label, with no label above 50%
 
-<!-- Your criterion. -->
-
-
+Before splitting, the labelled dataset must contain **at least 200 distinct
+posts**, with **at least 30 posts in each label** and **no label exceeding 50%**
+of the dataset.
 
 **Why this target:**
 
-
+Profile evaluations and application-tactic questions recur in the initial
+posts and could dominate collection. A minimum of 30 examples gives every
+label some training coverage, while the 50% cap prevents one common request
+from becoming a majority label; even 30 examples still yield only about
+four or five test examples, which must be acknowledged when interpreting F1.
 
 ---
 
-## 5.
+## 5. Confident predictions are at least 10 percentage points more accurate
 
-<!-- Your criterion. -->
-
-
+In each run, accuracy on the **most-confident third** of test predictions must
+exceed accuracy on the **least-confident third by at least 0.10**. Use the
+notebook's confidence report, which ranks posts by their highest predicted
+class probability and compares equally sized groups.
 
 **Why this target:**
 
-
+Some posts make a narrow request, while others combine university fit, career
+plans, and financial concerns. A gap of at least ten percentage points would
+show that the confidence ranking helps prioritize uncertain posts for manual
+review; it does not establish that the probability values are calibrated.
 
 ---
 
