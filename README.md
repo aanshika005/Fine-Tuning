@@ -107,48 +107,50 @@ For posts asking both, use the main decision the author frames the post around. 
 
 ## The Dataset
 
-<!-- Where you collected from, how you labelled, your counts, and three hard
-     cases. -->
-
 **Where the posts came from:**
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+I collected 200 public posts from r/MSCS, a Reddit community discussing computer science master's admissions, university choices, and career opportunities. Each example includes the post's title and body. The dataset includes profile evaluations, application questions, degree decisions, and admission-cycle discussions.
+
+**How I labelled them:**
+
+I decided the four-label taxonomy from the initial posts and labelled them. AI then reviewed the 20 existing labels and pre-labelled the remaining 180 posts according to each author's main request. I then reviewed all those 180 labels and made some corrections.
 
 **Counts per label:**
 
 | Label | Count | Share |
-|---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+|---|---:|---:|
+| `profile_calibration` | 78 | 39.0% |
+| `application_levers` | 54 | 27.0% |
+| `degree_tradeoff` | 51 | 25.5% |
+| `cycle_pulse` | 17 | 8.5% |
+| **Total** | **200** | **100%** |
+
+No label exceeds 50%, but `cycle_pulse` falls below my target of 30 examples. 
 
 **Three hard cases**
 
-<!-- Any post that made you pause: what it was, which two labels it could have
-     been, and what you chose. These are worth more than the easy 190. -->
+The following were sitting on the decision boundary of two labels.
 
 **1.**
-> *The post:*
+> *The post:* “Quant offer (5$00k+) or MS? T20 CompE, ~3.76 GPA. Odds for Stanford / Berkeley / UIUC?”
 >
-> *Could have been:*
+> *Could have been:* `profile_calibration` or `degree_tradeoff`.
 >
-> *I chose, because:*
+> *I chose, because:* The current label is `degree_tradeoff`. Although the author asks about admission odds and provides a detailed profile, the main decision is whether graduate study justifies turning down an existing quant offer. The profile supports that decision rather than being the sole purpose of the post.
 
 **2.**
-> *The post:*
+> *The post:* “Need Help with final uni hotlist and application timelines.”
 >
-> *Could have been:*
+> *Could have been:* `profile_calibration` or `application_levers`.
 >
-> *I chose, because:*
+> *I chose, because:* The current label is `application_levers`. The author provides a profile and university list, but the detailed questions focus on scheduling tests, choosing recommenders, explaining GPA in the SOP, and obtaining a credential evaluation. These are concrete application actions rather than primarily requests for admission predictions.
 
 **3.**
-> *The post:*
+> *The post:* “Have all universities paused CPT for MSCS?”
 >
-> *Could have been:*
+> *Could have been:* `cycle_pulse` or `degree_tradeoff`.
 >
-> *I chose, because:*
+> *I chose, because:* The current label is `degree_tradeoff`. The title asks for a policy update, which suggests `cycle_pulse`, but the body explicitly asks whether the author should still apply given concerns about internship access. That makes the main decision whether pursuing the degree remains worthwhile. This is a borderline case to check during human review.
 
 ---
 
