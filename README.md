@@ -129,7 +129,7 @@ No label exceeds 50%, but `cycle_pulse` falls below my target of 30 examples.
 
 **Three hard cases**
 
-The following were sitting on the decision boundary of two labels.
+The following posts were sitting on the decision boundary of two labels:
 
 **1.**
 > *The post:* “Quant offer (5$00k+) or MS? T20 CompE, ~3.76 GPA. Odds for Stanford / Berkeley / UIUC?”
@@ -156,44 +156,63 @@ The following were sitting on the decision boundary of two labels.
 
 ## The Training Run
 
-<!-- Your starting model, your settings, and anything you changed and why. -->
-
 **Base model:**
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+`distilbert-base-uncased`, fine-tuned to classify r/MSCS posts into four categories.
+
+**Settings:**
+
+The run used the notebook's default training settings:
+
+- Epochs: 3
+- Learning rate: 0.00002 (`2e-5`)
+- Batch size: 16
+- Seed: 42
+- Maximum input length: 128 tokens
 
 **Anything I changed from the defaults, and why:**
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+I replaced the example labels with `profile_calibration`, `application_levers`, `degree_tradeoff`, and `cycle_pulse` to match my r/MSCS taxonomy. The model and training hyperparameters remained at their defaults.
 
+After three epochs, held-out test accuracy was **40.0%** and macro F1 was **0.143**. The model achieved an F1 of **0.571** for `profile_calibration`, but **0.000** for the other three labels. The overall accuracy therefore does not demonstrate useful performance across all four categories.
 
+The most-confident third of test predictions had **90% accuracy**, compared with **10%** for the least-confident third. This meets my confidence-gap target for this seed, but it still needs to hold across the other two seeds.
+
+**Split sizes:**
+
+The notebook produced a stratified split of **139 training**, **31 validation**, and **30 test** posts.
+
+| Label | Train | Validation | Test |
+|---|---:|---:|---:|
+| `profile_calibration` | 54 | 12 | 12 |
+| `application_levers` | 38 | 8 | 8 |
+| `degree_tradeoff` | 35 | 8 | 8 |
+| `cycle_pulse` | 12 | 3 | 2 |
+| **Total** | **139** | **31** | **30** |
+
+`cycle_pulse` has only **17 examples overall** and **2 in the test set**, well below the suggested eight test examples. Its F1 is therefore especially sensitive to individual mistakes and may change substantially between seeds. The dataset also misses my collection target of at least 30 examples per label.
 
 ---
 
 ## How I Used AI
 
-<!-- Two specific moments — what you asked, what came back, what you changed.
-
-     ⚠️ Plus disclosure of any pre-labelling. If you had a model pre-label a
-     batch and then read and corrected every one, say that. It's an allowed
-     workflow and disclosing it costs you nothing. Not disclosing it is the
-     problem. -->
-
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I provided twenty labelled r/MSCS posts and asked AI to label other 180 posts based on the kinds of help their authors wanted.
+- *What came back:* AI labelled some posts as *need to review*.
+- *What I changed:* I reviewed all the 180 posts and made changes to the labels of some posts.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I provided my draft of five measurable acceptance criteria for my four-label r/MSCS classifier to AI before training and asked to check them.
+- *What came back:* AI proposed targets for overall accuracy, per-label F1, confusion between the hardest label pair, dataset balance, and the relationship between confidence and accuracy.
+- *What I changed:* I changed my criteria 3 and criteria 5 to more defensible and achieveable numbers after AI pointed out the problems my criteria might stuck on.
 
 **Pre-labelling disclosure:**
+
+AI assisted with labelling of 180 posts. All 200 labels in the training file were reviewed and assigned by me after AI labelling. I claim that every AI-assisted label has been manually checked and corrected.
+
+---
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
