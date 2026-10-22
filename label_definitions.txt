@@ -5,7 +5,7 @@
 #
 # Delete the examples below and put yours in.
 
-profile_calibration:Posts asking how an applicant’s qualifications match specific programs or which universities would make a realistic shortlist.
-application_levers:Posts asking which specific application action to take, such as submitting test scores, selecting recommenders, or contacting professors.
-degree_tradeoff:Posts weighing whether pursuing a master’s degree is worthwhile compared with employment or other career paths, considering costs, risks, and long-term goals.
-cycle_pulse:Posts asking about admission-cycle developments or other applicants’ experiences and plans, rather than requesting an individual profile evaluation or application strategy.
+profile_calibration: Posts asking how an applicant’s qualifications match specific programs or which universities would make a realistic shortlist.
+application_levers: Posts asking which specific application action to take, such as submitting test scores, selecting recommenders, or contacting professors.
+degree_tradeoff: Posts weighing whether pursuing a master’s degree is worthwhile compared with employment or other career paths, considering costs, risks, and long-term goals.
+cycle_pulse: Posts asking about admission-cycle developments or other applicants’ experiences and plans, rather than requesting an individual profile evaluation or application strategy.
