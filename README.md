@@ -223,25 +223,63 @@ AI assisted with labelling of 180 posts. All 200 labels in the training file wer
 
 ## Baseline vs. Trained
 
-<!-- Both models on the same posts. `python baseline.py --trained results.json`
-     prints this table for you. -->
-
 | Measure | Baseline | Trained | Difference |
-|---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+|---|---:|---:|---:|
+| Overall accuracy | 0.433 | 0.400 | -0.033 |
+| Macro F1 | 0.406 | 0.143 | -0.263 |
+| F1 — `application_levers` | 0.222 | 0.000 | -0.222 |
+| F1 — `cycle_pulse` | 0.500 | 0.000 | -0.500 |
+| F1 — `degree_tradeoff` | 0.500 | 0.000 | -0.500 |
+| F1 — `profile_calibration` | 0.400 | 0.571 | +0.171 |
 
 **What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+
+I predicted that the trained model would outperform the baseline on
+`profile_calibration` and `degree_tradeoff`, because fine-tuning on r/MSCS
+posts could help it learn the distinction between admission competitiveness
+and whether pursuing a degree is worthwhile.
 
 **What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
 
+On the same 30 held-out posts, the baseline correctly classified 13 posts
+and the trained model correctly classified 12. The accuracy difference is
+therefore only one post, but the macro F1 difference is much larger:
+0.406 versus 0.143.
 
+The trained model predicted every test post as `profile_calibration`.
+Although this produced a higher F1 for that label, it failed to recognize
+the other three categories. The baseline achieved nonzero F1 for all four
+labels, showing broader classification ability. This run provides no
+evidence that fine-tuning improved overall performance.
+
+`cycle_pulse` has only two test examples, so its baseline F1 of 0.500
+should be interpreted cautiously.
+
+### Effect of label definitions
+
+I also ran the baseline without `label_definitions.txt`, using only the bare
+label names. Both runs used the same 30 held-out posts.
+
+| Measure | Baseline with definitions | Baseline without definitions | Trained model |
+|---|---:|---:|---:|
+| Overall accuracy | 0.433 | 0.233 | 0.400 |
+| Macro F1 | 0.406 | 0.257 | 0.143 |
+| F1 — `application_levers` | 0.222 | 0.222 | 0.000 |
+| F1 — `cycle_pulse` | 0.500 | 0.154 | 0.000 |
+| F1 — `degree_tradeoff` | 0.500 | 0.500 | 0.000 |
+| F1 — `profile_calibration` | 0.400 | 0.154 | 0.571 |
+
+Providing definitions improved baseline accuracy by **20 percentage points**,
+from 23.3% to 43.3%, corresponding to six additional correct predictions out
+of 30 posts. Macro F1 increased from **0.257 to 0.406**. The improvements
+appeared in `cycle_pulse` and `profile_calibration`; the other two labels
+had unchanged F1 scores.
+
+This suggests that the custom label names alone did not communicate their
+meaning sufficiently to the baseline. I use the **baseline with definitions**
+as my main comparison because it received the intended meaning of each label. The trained model beat the bare-name baseline on accuracy, but still had
+lower macro F1. It did not outperform the baseline with definitions on
+either overall measure.
 
 ---
 
