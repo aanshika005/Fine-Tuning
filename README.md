@@ -285,34 +285,56 @@ either overall measure.
 
 ## Run Log — Before
 
-<!-- Five criteria across three seeds. The notebook's section 6 prints the
-     spread table; the Target and Verdict columns are yours. -->
+**Device:** Apple Silicon GPU (`mps`), PyTorch 2.14.1.
+Each seed was evaluated on 30 held-out posts.
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥70% in every seed | 40.0% | 40.0% | 43.3% | MISSED |
+| 2. Every label performs acceptably | Every label's F1 ≥0.55 in every seed | Minimum F1: 0.000 | Minimum F1: 0.000 | Minimum F1: 0.000 | MISSED |
+| 3. Hardest-boundary confusion | ≤25% between `profile_calibration` and `degree_tradeoff` in every seed | 40.0% | 40.0% | 35.0% | MISSED |
+| 4. Dataset size and balance | ≥200 distinct posts; ≥30 per label; no label above 50% | 200 rows; minimum count: 17; largest share: 39% | Same dataset | Same dataset | MISSED |
+| 5. Confidence helps identify reliable predictions | Accuracy gap ≥10 percentage points in every seed | 90% − 10% = 80 points | 70% − 20% = 50 points | 70% − 20% = 50 points | MET |
+
+**How the measurements were calculated:**
+
+- **Criterion 2:** The minimum per-label F1 is zero in every seed.
+  `application_levers` and `cycle_pulse` never achieved nonzero F1.
+- **Criterion 3:** Divide the two cross-label confusion counts by the total
+  true test posts in those two classes. Seeds 42 and 7 give
+  `(0 + 8) / (12 + 8) = 40%`; seed 2024 gives
+  `(0 + 7) / (12 + 8) = 35%`.
+- **Criterion 4:** Check the complete dataset once, before splitting.
+  `cycle_pulse` has only 17 examples, below the required 30.
+  The 200 rows still need a duplicate check to establish distinctness.
+- **Criterion 5:** Subtract the least-confident third's accuracy from the
+  most-confident third's accuracy. Each group contains 10 test posts.
+
+Accuracy varied by only 3.3 percentage points across seeds, but performance
+was consistently weak. Meeting the confidence criterion means confidence
+helped rank predictions by reliability; it does not mean the classifier
+successfully distinguished all four labels.
 
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
+The following matrix is for **seed 42**. Rows are true labels and columns
+are predicted labels.
 
-| true \ predicted |  |  |  |
-|---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| true \ predicted | profile_calibration | application_levers | degree_tradeoff | cycle_pulse |
+|---|---:|---:|---:|---:|
+| **profile_calibration** | 12 | 0 | 0 | 0 |
+| **application_levers** | 8 | 0 | 0 | 0 |
+| **degree_tradeoff** | 8 | 0 | 0 | 0 |
+| **cycle_pulse** | 2 | 0 | 0 | 0 |
 
 **My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
 
-
+The largest off-diagonal count is tied: eight `application_levers` posts
+and eight `degree_tradeoff` posts were predicted as `profile_calibration`,
+with zero errors in the reverse directions. The model predicted all
+30 posts as `profile_calibration`, so its 40% accuracy reflects the
+largest class's share of this test set rather than successful separation
+of the four categories.
 
 ---
 
