@@ -340,83 +340,105 @@ of the four categories.
 
 ## Verdicts and Diagnoses
 
-<!-- MET or MISSED against LAST UNIT's target. The target has to hold across
-     all three seeds, not turn up sometimes. -->
-
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | At least 70% in every seed | MISSED | Accuracy was 40.0%, 40.0%, and 43.3%; all three runs fell below 70%. |
+| 2 | Per-label performance | Every label's F1 at least 0.55 in every seed | MISSED | `application_levers` and `cycle_pulse` had zero F1 across all seeds. `degree_tradeoff` scored 0.000, 0.000, and 0.167. |
+| 3 | Hardest-boundary confusion | At most 25% confusion between `profile_calibration` and `degree_tradeoff` in every seed | MISSED | Cross-label confusion was 40%, 40%, and 35%, calculated from the two cross-label cells divided by the total true posts in these classes. |
+| 4 | Dataset size and balance | At least 200 distinct posts, at least 30 per label, and no label above 50% | MISSED | The dataset contains 200 rows and the largest label represents 39%, but `cycle_pulse` has only 17 examples. Distinctness still requires checking possible reposts. |
+| 5 | Confidence ranking | Most-confident third at least 10 percentage points more accurate than least-confident third in every seed | MET | The accuracy gaps were 80, 50, and 50 percentage points, exceeding the target in every run. |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+### 1. Overall accuracy: the model relies heavily on the largest class
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+For seeds 42 and 7, every test post was predicted as
+`profile_calibration`. For seed 2024, 26 of 30 predictions were still
+assigned that label. The low accuracy spread therefore reflects consistently
+weak classification rather than reliable performance across categories.
 
+The largest class accounts for 39% of the full dataset and 40% of each test
+split, explaining why predicting it exclusively produces 40% accuracy.
+This pattern suggests that the current training run did not learn enough
+to separate the categories. Class imbalance may contribute, but these
+results alone do not establish the underlying cause.
 
+### 2. Per-label performance: insufficient minority coverage and broader learning failure
+
+`cycle_pulse` has only 17 examples overall, including 12 training posts and
+two test posts per seed. This provides limited training coverage and makes
+its test F1 especially sensitive to individual mistakes.
+
+However, scarcity alone cannot explain all failures. `application_levers`
+has 54 examples and still receives zero F1 in every run. The model's
+heavy reliance on `profile_calibration` suggests a broader learning problem
+that needs investigation alongside label quality and class balance.
+
+### 3. Hardest boundary: degree decisions are repeatedly treated as profile evaluations
+
+Eight of eight true `degree_tradeoff` posts were predicted as
+`profile_calibration` for seeds 42 and 7, and seven of eight were assigned
+that label for seed 2024. No true `profile_calibration` posts were predicted
+as `degree_tradeoff` in any run.
+
+These categories can share detailed applicant profiles, even though their
+main questions differ: “Where can I get in?” versus “Is graduate school
+worthwhile?” The overlap makes this a plausible difficult boundary.
+However, because the model also misclassifies other categories into
+`profile_calibration`, the matrix does not prove that this boundary alone
+caused the failure.
+
+### 4. Dataset balance: too few examples of cycle updates
+
+`cycle_pulse` contains 17 posts, which is 13 below my minimum target.
+The other labels contain 78, 54, and 51 posts. Collection therefore produced
+much less coverage of admission updates and community plans than of other
+requests.
+
+I should collect additional distinct `cycle_pulse` posts and inspect possible
+reposts before splitting again. Changing existing labels merely to balance
+the counts would not address the coverage problem.
+
+### What the agreement report contributes
+
+I agreed with staff on 29 of 30 posts (96.7%). The one disagreement was
+`analysis` versus `hot_take`: I overlooked that a specific comparison
+supported the argument because I found the evidence unconvincing.
+My adjudication placed this in pile (a), where the written rule covered
+the case but I applied it loosely.
+
+This provides one concrete example of inconsistent rule application and
+supports reviewing my r/MSCS labels against their written decision rules.
+It does not establish widespread labelling inconsistency: the staff task
+uses different labels, and agreement was high on that set.
+
+Taken together, the evidence points to limited `cycle_pulse` coverage and
+a model that mostly predicts the largest class. Inconsistent labels and
+overlapping categories remain possible contributors, but they need a
+targeted review before I can claim either is the main cause.
 
 ---
 
 ## Agreement Report
 
-<!-- Your rate against the staff set, and every disagreement adjudicated.
+**Agreement rate:** 29 / 30 = **96.7%** (rounded to 97% by the script).
 
-     Remember you labelled these 30 under the STAFF taxonomy in
-     data/staff_taxonomy.md, not your own — so every argument below is made
-     from those definitions and those decision rules. -->
-
-**Agreement rate:** ___ / 30 = ___%
-
-<!-- Nobody grades this number. A 60% who argues every disagreement from the
-     stated rules beats a 95% who wrote "staff was right" nine times. Several
-     of the 30 were chosen because they're genuinely ambiguous — you should be
-     winning some of these. -->
-
-**Disagreements**
-
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
-
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
+### Disagreements
 
 **1.**
-> *The post:*
+> *The post:* “Three of us ran the same session on the same day, different shoes, within 10 seconds of each other over 5 miles. I'm not saying shoes do nothing, but whatever they do was smaller than the noise between three people.”
 >
-> *Staff said / I said:*
+> *Staff said / I said:* `analysis` / `hot_take`.
 >
-> *My call, and why:*
+> *My call, and why:* I agree with `analysis`. Rule 1 asks whether a specific, checkable fact carries the argument. The comparison—three runners wearing different shoes finishing within 10 seconds over five miles—is the evidence supporting the conclusion about shoe effects. Removing those details removes the argument's support. Different runners introduce other variables, making the evidence limited, but weak evidence is different from offering no evidence.
 >
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+> *Which pile:* **(a) The rule covered it, and I applied it loosely.** My original label treated a debatable conclusion as an unsupported claim, overlooking the specific comparison supporting it.
 
 **What the pattern in my disagreements tells me:**
 
+My only disagreement concerned the boundary between an evidence-backed argument and an unsupported claim. It suggests that I should distinguish whether evidence supports the reasoning from whether that evidence is convincing.
 
+The 29 agreements show that I mostly applied the staff taxonomy consistently on these posts. They do not prove that my own 200 r/MSCS labels are consistent, because those use a different taxonomy. For my dataset, I should review mixed posts against the written boundary rules rather than relying on an overall impression.
 
 ---
 
@@ -424,37 +446,158 @@ of the four categories.
 
 **What I changed:**
 
+I increased training from three epochs to six, keeping the dataset,
+taxonomy, learning rate, batch size, and three seeds unchanged.
+
 **Which diagnosis pointed at it:**
+
+The model predicted only `profile_calibration` for seeds 42 and 7,
+and mostly that label for seed 2024. Training loss was still decreasing
+during the original run, so I tested whether additional training would
+help the model distinguish the other categories.
+
+This is a test of insufficient training as a possible cause, not a
+confirmed diagnosis. The shortage of `cycle_pulse` examples remains
+unresolved.
+
+**Why I chose this improvement:**
+
+My first plan was to add more `cycle_pulse` posts because it had only
+17 examples and zero F1 across all three seeds. However, I could not find
+additional suitable posts in r/MSCS during collection. Rather than assign
+unrelated posts to that label, I chose to test one training-setting change:
+increasing the number of epochs from three to six.
+
+All other settings and the dataset remained unchanged. The shortage of
+`cycle_pulse` examples remains an unresolved limitation.
 
 ### Run Log — After
 
+**Change:** Increased training from three to six epochs. The dataset,
+model, learning rate, batch size, and seeds remained unchanged.
+
+**Device:** Apple Silicon GPU (`mps`), PyTorch 2.14.1.
+
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥70% in every seed | 53.3% | 46.7% | 46.7% | MISSED |
+| 2. Every label performs acceptably | Every label's F1 ≥0.55 in every seed | Minimum F1: 0.000 | Minimum F1: 0.000 | Minimum F1: 0.000 | MISSED |
+| 3. Hardest-boundary confusion | ≤25% between `profile_calibration` and `degree_tradeoff` in every seed | 35.0% | 20.0% | 20.0% | MISSED: seed 42 exceeds target |
+| 4. Dataset size and balance | ≥200 distinct posts; ≥30 per label; no label above 50% | 200 rows; minimum count: 17; largest share: 39% | Same dataset | Same dataset | MISSED: `cycle_pulse` has only 17 examples |
+| 5. Confidence ranking | Accuracy gap ≥10 percentage points in every seed | 90% − 40% = 50 points | 70% − 20% = 50 points | 70% − 30% = 40 points | MET |
 
-**Did it help, and how do I know:**
+Criterion 3 uses the two cross-label confusion counts divided by the
+20 true test posts in those classes: 7/20, 4/20, and 4/20.
+Errors into other labels are excluded from this particular measurement.
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+### Confusion matrix — after improvement
 
+The following matrix shows seed 42 after increasing training from three
+to six epochs.
 
+| true \ predicted | profile_calibration | application_levers | degree_tradeoff | cycle_pulse |
+|---|---:|---:|---:|---:|
+| **profile_calibration** | 11 | 1 | 0 | 0 |
+| **application_levers** | 4 | 4 | 0 | 0 |
+| **degree_tradeoff** | 7 | 0 | 1 | 0 |
+| **cycle_pulse** | 0 | 2 | 0 | 0 |
+
+For seed 42, accuracy increased from 40.0% to 53.3%, corresponding to four
+additional correct predictions. Unlike the original run, the model now
+correctly identifies some `application_levers` and `degree_tradeoff` posts.
+However, it still fails to identify any `cycle_pulse` posts. Results from
+the other two seeds are needed before concluding that the improvement
+helped consistently.
+
+### Did it help, and how do I know?
+
+Increasing training to six epochs improved accuracy and macro F1
+for every seed.
+
+| Measure | Seed 42: Before → After | Seed 7: Before → After | Seed 2024: Before → After |
+|---|---|---|---|
+| Accuracy | 40.0% → 53.3% | 40.0% → 46.7% | 43.3% → 46.7% |
+| Macro F1 | 0.143 → 0.351 | 0.143 → 0.274 | 0.200 → 0.301 |
+
+`application_levers` improved from zero F1 in every seed to 0.533,
+0.455, and 0.333. However, `cycle_pulse` still had zero F1 across
+all seeds, and `degree_tradeoff` remained weak.
+
+The change helped, The model now correctly identifies some `application_levers` posts in every seed, whereas its F1 for that label was previously zero throughout.
+However, `degree_tradeoff` remains weak and `cycle_pulse` still has zero
+F1 in all three runs. The improvement helped consistently across these
+seeds, but criteria 1–4 remain MISSED and criterion 5 remains MET but it did not change the overall criterion verdicts, more training partially addressed the classification failure without resolving it.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+### 1. Overall accuracy — MISSED
 
+Accuracy improved to 53.3%, 46.7%, and 46.7%, but remained below the
+70% target in every seed. I would next inspect misclassified posts
+alongside the training and validation curves to investigate whether
+input truncation, overlapping categories, or insufficient learning
+contributed to the errors.
 
+I stopped after the planned three-to-six-epoch experiment so I could
+report the effect of one change without mixing in additional changes.
 
-**The gap between what I meant my labels to capture and what the model
-learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
+### 2. Per-label performance — MISSED
 
+Every label needed an F1 of at least 0.55 in every seed.
+`application_levers` improved but remained below that threshold;
+`degree_tradeoff` remained weak, and `cycle_pulse` had zero F1 throughout.
+
+I would collect more suitable `cycle_pulse` examples and review errors
+in the other categories against the written taxonomy. I could not find
+additional suitable `cycle_pulse` posts during collection, so that
+coverage problem remains unresolved.
+
+### 3. Hardest-boundary confusion — MISSED
+
+Confusion between `profile_calibration` and `degree_tradeoff` fell to
+35%, 20%, and 20%. Although two seeds met the 25% limit, seed 42 did not,
+so the criterion remains missed.
+
+I would review posts combining admission odds with degree-value questions
+and check whether their labels consistently follow the main-request rule.
+My staff agreement check found one case where I applied a written boundary
+loosely, making this review worthwhile, but it does not prove that the
+r/MSCS boundary was labelled inconsistently. I stopped before making
+another intervention because this experiment changed only the epoch count.
+
+### 4. Dataset size and balance — MISSED
+
+The dataset still has only 17 `cycle_pulse` examples, below the minimum
+of 30. No label exceeds 50%, but possible reposts also need checking
+before claiming that all 200 rows are distinct posts.
+
+I would inspect possible duplicates and extend collection over a longer
+period to find additional admission-cycle posts. I stopped collection
+when I could not find more suitable examples, rather than force unrelated
+posts into `cycle_pulse`.
+
+### 5. Confidence ranking — MET, with limitations
+
+The most-confident third was 50, 50, and 40 percentage points more accurate
+than the least-confident third. This met the target in every seed, but
+useful confidence ranking does not compensate for poor recognition of
+individual categories.
+
+**The gap between what I meant my labels to capture and what the model learned:**
+
+My labels were intended to distinguish admission competitiveness,
+application actions, degree-value decisions, and admission-cycle updates,
+but the model still relies heavily on `profile_calibration`.
+In the seed-42 after-run matrix, seven of eight `degree_tradeoff` posts
+were assigned that label and both `cycle_pulse` posts were called
+`application_levers`, showing that these distinctions remain poorly learned.
+
+---
+### How I used AI
+
+Firstly, I used AI to help interpret the baseline comparison, and calculate criterion measurements from the three-seed results. Secondly, AI suggested increasing training from three to six epochs after I could not find more suitable `cycle_pulse` posts. It also helped check whether the changed setting was used when an outdated displayed table initially appeared unchanged.
 
 
 <!-- ═════════════════════════════════════════════════════════════════════

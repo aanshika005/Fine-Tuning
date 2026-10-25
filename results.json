@@ -1,25 +1,25 @@
 {
   "seed": 42,
   "n_test": 30,
-  "accuracy": 0.4,
-  "f1_macro": 0.14285714285714285,
+  "accuracy": 0.5333333333333333,
+  "f1_macro": 0.3506535947712418,
   "per_label": {
     "profile_calibration": {
-      "precision": 0.4,
-      "recall": 1.0,
-      "f1": 0.5714285714285714,
+      "precision": 0.5,
+      "recall": 0.9166666666666666,
+      "f1": 0.6470588235294118,
       "support": 12
     },
     "application_levers": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
+      "precision": 0.5714285714285714,
+      "recall": 0.5,
+      "f1": 0.5333333333333333,
       "support": 8
     },
     "degree_tradeoff": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
+      "precision": 1.0,
+      "recall": 0.125,
+      "f1": 0.2222222222222222,
       "support": 8
     },
     "cycle_pulse": {
@@ -31,35 +31,35 @@
   },
   "confusion": {
     "profile_calibration": {
-      "profile_calibration": 12,
-      "application_levers": 0,
+      "profile_calibration": 11,
+      "application_levers": 1,
       "degree_tradeoff": 0,
       "cycle_pulse": 0
     },
     "application_levers": {
-      "profile_calibration": 8,
-      "application_levers": 0,
+      "profile_calibration": 4,
+      "application_levers": 4,
       "degree_tradeoff": 0,
       "cycle_pulse": 0
     },
     "degree_tradeoff": {
-      "profile_calibration": 8,
+      "profile_calibration": 7,
       "application_levers": 0,
-      "degree_tradeoff": 0,
+      "degree_tradeoff": 1,
       "cycle_pulse": 0
     },
     "cycle_pulse": {
-      "profile_calibration": 2,
-      "application_levers": 0,
+      "profile_calibration": 0,
+      "application_levers": 2,
       "degree_tradeoff": 0,
       "cycle_pulse": 0
     }
   },
   "confidence": {
-    "mean_when_right": 0.41565099358558655,
-    "mean_when_wrong": 0.35976532101631165,
+    "mean_when_right": 0.4700031876564026,
+    "mean_when_wrong": 0.3689737617969513,
     "accuracy_most_confident_third": 0.9,
-    "accuracy_least_confident_third": 0.1,
+    "accuracy_least_confident_third": 0.4,
     "n_per_third": 10
   },
   "device": "mps",
