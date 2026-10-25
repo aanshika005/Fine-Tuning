@@ -505,9 +505,7 @@ to six epochs.
 For seed 42, accuracy increased from 40.0% to 53.3%, corresponding to four
 additional correct predictions. Unlike the original run, the model now
 correctly identifies some `application_levers` and `degree_tradeoff` posts.
-However, it still fails to identify any `cycle_pulse` posts. Results from
-the other two seeds are needed before concluding that the improvement
-helped consistently.
+However, it still fails to identify any `cycle_pulse` posts. 
 
 ### Did it help, and how do I know?
 
